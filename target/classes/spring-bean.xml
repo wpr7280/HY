@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="gb2312"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
-	<bean id="workFlowEngine" class="com.taobao.chongzhi.flow.engine.WorkFlowEngineImpl"
-		init-method="init">
+	<bean id="workFlowEngine" class="com.wpr.dispatching.WorkFlowEngine">
+		<!-- init-method="init" -->
 		<property name="processXmlFiles">
 			<list>
 				<value>workflow/test.xml</value>

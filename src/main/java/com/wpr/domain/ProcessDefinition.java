@@ -18,7 +18,7 @@ public class ProcessDefinition {
 	/*默认的状态 */
 	private String defaultState;
 	/*一个流程中所有的状态类，key是State的id，value是State对象*/
-	private Map<String,String> states;
+	private Map<String,State> states;
 	
 	public String getType() {
 		return type;
@@ -39,10 +39,10 @@ public class ProcessDefinition {
 	public void setDefaultState(String defaultState) {
 		this.defaultState = defaultState;
 	}
-	public Map<String, String> getStates() {
+	public Map<String, State> getStates() {
 		return states;
 	}
-	public void setStates(Map<String, String> states) {
+	public void setStates(Map<String, State> states) {
 		this.states = states;
 	}
 	@Override

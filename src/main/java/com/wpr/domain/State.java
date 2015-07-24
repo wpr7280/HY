@@ -18,8 +18,8 @@ public class State {
 	private String target;
 	/*将调用对象的方法 */
 	private String method;
-	/*当前状态的简单描述*/
-	private String desc;
+//	/*当前状态的简单描述*/
+//	private String desc;
 	/*节点的转换描述*/
 	private List<Transition> transitions;
 	public String getId() {
@@ -39,12 +39,6 @@ public class State {
 	}
 	public void setMethod(String method) {
 		this.method = method;
-	}
-	public String getDesc() {
-		return desc;
-	}
-	public void setDesc(String desc) {
-		this.desc = desc;
 	}
 	public List<Transition> getTransitions() {
 		return transitions;

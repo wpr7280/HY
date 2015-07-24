@@ -3,7 +3,9 @@ package com.wpr.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,6 +23,7 @@ import org.xml.sax.SAXException;
 import com.wpr.domain.Process;
 import com.wpr.domain.ProcessDefinition;
 import com.wpr.domain.State;
+import com.wpr.domain.Transition;
 import com.wpr.exception.DocumentParserException;
 
 
@@ -54,9 +57,8 @@ public class DocumentParser {
 	 * @throws IOException
 	 * @throws DocumentParserException
 	 */
-	public static Result<Void> parse(InputStream in) throws ParserConfigurationException, SAXException, IOException, DocumentParserException {
+	public static ProcessDefinition parse(InputStream in) throws ParserConfigurationException, SAXException, IOException, DocumentParserException {
 		ProcessDefinition processDefinition = new ProcessDefinition();
-		Result<Process> result = null;
 		DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder();
 		// 用于忽略xml中的dtd
@@ -82,18 +84,27 @@ public class DocumentParser {
 			throw new DocumentParserException();
 		}
 		processDefinition.setType(procDefAttrMap.getNamedItem(ATTR_TYPE).getNodeValue());
-		processDefinition.setDesc(procDefAttrMap.getNamedItem(ATTR_TYPE).getNodeValue());
+		processDefinition.setDesc(procDefAttrMap.getNamedItem(ATTR_DESC).getNodeValue());
 		processDefinition.setDefaultState(procDefAttrMap.getNamedItem(ATTR_DEFAULT).getNodeValue());
 		NodeList nodeList = procDefNode.getChildNodes();
-		List<State> stateList = new ArrayList<State>();
+		Map<String,State> states = new HashMap<String,State>();
+		if(nodeList!=null){
+			for(int i = 0; i < nodeList.getLength(); i++){
+				Node stateNode = nodeList.item(i);
+				if (!stateNode.getNodeName().equals(STATE))
+					continue;
+				states.put(stateNode.getNodeName(),parseStateNode(stateNode));
+			}
+		}
+		/*List<State> stateList = new ArrayList<State>();
 		for(int i = 0; i < nodeList.getLength(); i++){
 			Node stateNode = nodeList.item(i);
 			if (!stateNode.getNodeName().equals(TRANSITION))
 				continue;
 			stateList.add(parseStateNode(stateNode));
-		}
-		
-		return null;
+		}*/
+		processDefinition.setStates(states);
+		return processDefinition;
 	}
 	/**
 	 * 解析State节点
@@ -117,7 +128,39 @@ public class DocumentParser {
 		state.setId(transAttrMap.getNamedItem(ATTR_ID).getNodeValue());
 		state.setMethod(transAttrMap.getNamedItem(ATTR_METHOD)
 				.getNodeValue());
-		return null;
+		NodeList nextNodeList = stateNode.getChildNodes();
+		List<Transition> transitionList = new ArrayList<Transition>();
+		if(nextNodeList!=null){
+			for (int i = 0; i < nextNodeList.getLength(); i++) {
+				Node nextTransition = nextNodeList.item(i);
+				if(!TRANSITION.equals(nextTransition.getNodeName()))
+					continue;
+				transitionList.add(parseNext(state.getId(),nextTransition));
+			}
+		}
+		state.setTransitions(transitionList);
+		return state;
+	}
+	/**
+	 * 解析Transition节点
+	 * @param id
+	 * @param nextTransition
+	 * @return
+	 * @throws DocumentParserException 
+	 */
+	private static Transition parseNext(String id,
+			Node nextTransition) throws DocumentParserException {
+		if(!TRANSITION.equals(nextTransition.getNodeName()))
+			throw new DocumentParserException();
+		NamedNodeMap nextAttrMap = nextTransition.getAttributes();
+		if (nextAttrMap.getNamedItem(ATTR_RESULT) == null) 
+			throw new DocumentParserException();
+		Transition transition = new Transition();
+		transition.setResult(nextAttrMap.getNamedItem(ATTR_RESULT).getNodeValue());
+		if(nextAttrMap.getNamedItem(ATTR_TO)!=null){
+			transition.setTo(nextAttrMap.getNamedItem(ATTR_TO).getNodeValue());
+		}
+		return transition;
 	}
 
 	public static class ByteArrayInputStream extends InputStream {

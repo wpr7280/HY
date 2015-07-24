@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE processor SYSTEM "workflow.dtd" >
-<processor defaultState="first" desc="this is a test">
+<!-- type表示使用线程池的类型，defaultState表示初始的状态，desc是简单描述 -->
+<processor type="service" defaultState="first" desc="this is a test">
+	<!-- state是状态的抽象表示，target表示所要调用的类的信息，method是要调用的方法，id是标示，当别的状态转到这个状态时由id来表示-->
 	<state target="Transation" method="first" id="first">
+		<!-- transition表示下一次的状态，result是调用方法返回的状态码，to是下一次要跳转的状态id -->
 		<transition result="SUCCESS" to="second"/>
 		<transition result="FAIL" to="first"/>
 	</state>
