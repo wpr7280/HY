@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT processor (state+)>
+	<!ATTLIST processor
+		type CDATA #REQUIRED
+		defaultState IDREF #REQUIRED
+		desc CDATA #REQUIRED>
+<!ELEMENT state (transition*)>
+	<!ATTLIST state
+		id ID #REQUIRED
+		target CDATA #REQUIRED
+		method CDATA #REQUIRED>
+<!ELEMENT transition EMPTY>
+	<!ATTLIST transition
+		result CDATA #REQUIRED
+		to IDREF #IMPLIED>
