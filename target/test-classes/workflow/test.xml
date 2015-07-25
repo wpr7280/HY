@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE processor SYSTEM "workflow.dtd" >
 <processor type="service" defaultState="first" desc="this is a test">
-	<state target="Transation" method="first" id="first">
+	<state target="transation" method="first" id="first">
 		<transition result="SUCCESS" to="second"/>
 		<transition result="FAIL" to="first"/>
 	</state>
-	<state target="Transation" method="second" id="second">
+	<state target="transation" method="second" id="second">
 		<transition result="SUCCESS" to="second"/>
 		<transition result="FAIL" to="first"/>
 	</state>

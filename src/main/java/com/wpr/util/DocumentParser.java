@@ -21,7 +21,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.wpr.domain.Process;
-import com.wpr.domain.ProcessDefinition;
+import com.wpr.domain.Process;
 import com.wpr.domain.State;
 import com.wpr.domain.Transition;
 import com.wpr.exception.DocumentParserException;
@@ -57,8 +57,8 @@ public class DocumentParser {
 	 * @throws IOException
 	 * @throws DocumentParserException
 	 */
-	public static ProcessDefinition parse(InputStream in) throws ParserConfigurationException, SAXException, IOException, DocumentParserException {
-		ProcessDefinition processDefinition = new ProcessDefinition();
+	public static Process parse(InputStream in) throws ParserConfigurationException, SAXException, IOException, DocumentParserException {
+		Process processDefinition = new Process();
 		DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance()
 				.newDocumentBuilder();
 		// 用于忽略xml中的dtd

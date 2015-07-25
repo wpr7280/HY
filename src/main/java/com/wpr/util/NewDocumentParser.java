@@ -15,7 +15,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
-import com.wpr.domain.ProcessDefinition;
+import com.wpr.domain.Process;
 import com.wpr.domain.State;
 import com.wpr.domain.Transition;
 import com.wpr.exception.DocumentParserException;
@@ -50,7 +50,7 @@ public class NewDocumentParser {
 	 * @return
 	 * @throws Exception
 	 */
-	public static ProcessDefinition parser(String procXmlFile) throws Exception{
+	public static Process parser(String procXmlFile) throws Exception{
 		return parser(new File(procXmlFile));
 	}
 	/**
@@ -61,7 +61,7 @@ public class NewDocumentParser {
 	 * @throws MalformedURLException
 	 * @throws DocumentException
 	 */
-	public static ProcessDefinition parser(File in) throws DocumentParserException, MalformedURLException, DocumentException {
+	public static Process parser(File in) throws DocumentParserException, MalformedURLException, DocumentException {
 		Document document = null;  
 		SAXReader saxReader = new SAXReader();  
 	    document = saxReader.read(in); // 读取XML文件,获得document对象
@@ -72,7 +72,7 @@ public class NewDocumentParser {
 	    Assert.assertNotNull(processorNode.attributeValue(ATTR_TYPE));
 	    Assert.assertNotNull(processorNode.attributeValue(ATTR_DEFAULT));
 
-	    ProcessDefinition processDefinition = new ProcessDefinition();
+	    Process processDefinition = new Process();
 	    Map<String,State> states = new HashMap<String, State>();
 	    
 	    processDefinition.setType(processorNode.attributeValue(ATTR_TYPE));
@@ -84,7 +84,10 @@ public class NewDocumentParser {
 	    while(iter.hasNext()){
 	    	Element stateNode = iter.next();
 //	    	System.out.println(stateNode.attributeValue("id"));
-	    	states.put(stateNode.getName(), parserState(stateNode));
+	    	if(states.get(stateNode.attributeValue("id"))!=null){
+	    		throw new DocumentException("state定义存在重复");
+	    	}
+	    	states.put(stateNode.attributeValue(STATE_ATTR_ID), parserState(stateNode));
 	    }
 	    processDefinition.setStates(states);
 	    return processDefinition;
