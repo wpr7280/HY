@@ -1,9 +1,9 @@
 package com.wpr.domain;
 /**
- * 一个任务的描述接口，所有的工作只要实现了这个接口就可以有WorkFlowEngine进行调度
+ * 传入参数Model的标示，名字起得很差，主要是之前没打算这样做。。。
  * @author peirong.wpr
  *
  */
 public interface Task {
-
+	
 }

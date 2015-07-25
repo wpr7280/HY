@@ -74,13 +74,18 @@ public class Process {
 			}
 		}
 	}
+	/**
+	 * 把xml文件中定义的方法注册到stateProxy中，由这个去统一处理
+	 * @param applicationContext
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 */
 	public void register(ApplicationContext applicationContext) throws NoSuchMethodException, SecurityException {
 		stateProxy = new HashMap<String, Method>();
 		for(String key:states.keySet()){
 			State state = states.get(key);
 			Object bean = applicationContext.getBean(state.getTarget());
-			//TODO 调用方法的参数怎么设计？
-			Method method = bean.getClass().getMethod(state.getMethod(), null);
+			Method method = bean.getClass().getMethod(state.getMethod(), Task.class);
 			stateProxy.put(state.getId(),method);
 		}
 	}

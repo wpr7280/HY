@@ -1,21 +1,22 @@
 package com.wpr.dispatching;
 
-import java.io.InputStream;
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.wpr.domain.Process;
-import com.wpr.exception.DocumentParserException;
-import com.wpr.util.DocumentParser;
+import com.wpr.domain.Task;
 import com.wpr.util.Result;
 
 
 
 public class TaskExecutor {
-
-//	private Map<String,TaskPool> threadPools;
-	
-
+	private Logger logger = LoggerFactory.getLogger(TaskExecutor.class);
+	/**
+	 * 完成对一个流程的调度
+	 * @param task  整个流程中需要的参数对象的封装Model
+	 * @return
+	 */
+	public Result<Void> schedule(Task task) {
+		
+		return null;
+	}
 }

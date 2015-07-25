@@ -15,7 +15,11 @@ import org.springframework.context.ApplicationContextAware;
 
 import com.wpr.domain.Process;
 import com.wpr.util.NewDocumentParser;
-
+/**
+ * 
+ * @author peirong.wpr
+ *
+ */
 public class WorkFlowEngine implements InitializingBean,ApplicationContextAware {
 	Logger logger = LoggerFactory.getLogger(WorkFlowEngine.class);
 	@Autowired
@@ -24,7 +28,10 @@ public class WorkFlowEngine implements InitializingBean,ApplicationContextAware 
 	private String path;
 	
 	private ApplicationContext applicationContext;
+	/*存放服务的类型数目，key是xml文件中定义的process的type，value是对应的process*/
 	private Map<String,Process> processMap;
+	/*每一种不同type的process对应着一个线程池，这样做的目的是更好的控制各个数据池，甚至后期可以由配置文件来决定各个线程池的容量，以保证良好的性能*/
+	private Map<String,ProcessPool> processPools;
 	
 	public void afterPropertiesSet() throws Exception {
 		this.path = this.getClass().getClassLoader().getResource("").getPath();
@@ -56,7 +63,7 @@ public class WorkFlowEngine implements InitializingBean,ApplicationContextAware 
 				process.check();
 				//完善process的定义
 				process.register(applicationContext);
-//				processMap.put(process.getType(), process);
+				processMap.put(process.getType(), process);
 				System.out.println(process);
 			} catch (Exception e) {
 				e.printStackTrace();
