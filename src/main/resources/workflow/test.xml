@@ -8,5 +8,8 @@
 		<transition result="SUCCESS" to="second"/>
 		<transition result="FAIL" to="first"/>
 	</state>
-	<state target="Transation" method="second" id="second"></state>
+	<state target="Transation" method="second" id="second">
+		<transition result="SUCCESS" to="second"/>
+		<transition result="FAIL" to="first"/>
+	</state>
 </processor>

@@ -15,7 +15,12 @@ public class DocumentParserTest {
 	}
 	@Test
 	public void testDocumentParserTest(){
-		WorkFlowEngine workFlowEngine = (WorkFlowEngine) ctx.getBean("workFlowEngine");
-		workFlowEngine.parse();
+//		WorkFlowEngine workFlowEngine = (WorkFlowEngine) ctx.getBean("workFlowEngine");
+//		workFlowEngine.parser();
+	}
+	@Test
+	public void testPath(){
+		String path = this.getClass().getClassLoader().getResource("").getPath();
+		System.out.println(path);
 	}
 }
