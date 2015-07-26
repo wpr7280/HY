@@ -124,4 +124,19 @@ public class Process {
 			throw new MethodInvokeException(e);
 		}
 	}
+	/**
+	 * 获取下一次要执行的state
+	 * @param stateId  本次执行的stateId
+	 * @param nextDO   执行结束后的方法返回值，包含了结果状态码
+	 * @return   下一次标签结果transition
+	 */
+	public Transition getNextState(String stateId, BaseDO nextDO) {
+		State currentState = states.get(stateId);
+		for(Transition t:currentState.getTransitions()){
+			if(t.getResult().equals(nextDO.getResultCode())){
+				return t;
+			}
+		}
+		return null;
+	}
 }

@@ -12,6 +12,8 @@ public class BaseDO {
 	protected String type;
 	/*下一次要执行的state的id*/
 	protected String next;
+	/*返回的结果状态*/
+	protected String resultCode;
 	public String getType() {
 		return type;
 	}
@@ -27,6 +29,15 @@ public class BaseDO {
 	public void setNext(String next) {
 		this.next = next;
 	}
+	
+	public String getResultCode() {
+		return resultCode;
+	}
+
+	public void setResultCode(String resultCode) {
+		this.resultCode = resultCode;
+	}
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);

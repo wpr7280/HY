@@ -18,6 +18,8 @@ import org.springframework.context.ApplicationContextAware;
 
 import com.wpr.domain.Process;
 import com.wpr.domain.BaseDO;
+import com.wpr.domain.Transition;
+import com.wpr.exception.MethodException;
 import com.wpr.exception.PoolBusyException;
 import com.wpr.exception.ProcessPoolNotSupportException;
 import com.wpr.util.NewDocumentParser;
@@ -81,7 +83,7 @@ public class WorkFlowEngine implements InitializingBean,ApplicationContextAware 
 				//完善process的定义
 				process.register(applicationContext);
 				processMap.put(process.getType(), process);
-				System.out.println(process);
+//				System.out.println(process);
 			} catch (Exception e) {
 				e.printStackTrace();
 				new DocumentException("xml文件解析错误");
@@ -93,6 +95,7 @@ public class WorkFlowEngine implements InitializingBean,ApplicationContextAware 
 	 * @param baseDO  参数
 	 * @return
 	 * @throws PoolBusyException 
+	 * @throws MethodException 
 	 * @throws ProcessPoolNotSupportException 
 	 */
 	@SuppressWarnings("deprecation")
@@ -115,7 +118,28 @@ public class WorkFlowEngine implements InitializingBean,ApplicationContextAware 
 		}else{
 			stateId = baseDO.getNext();
 		}
-		return pool.schdule(baseDO,stateId,process);
+		Object obj = pool.schdule(baseDO,stateId,process);
+		if(obj==null){
+			//TODO 这个地方之后在修正
+			logger.info("调用方法返回的参数不对");
+			return null;
+		}
+		if(!(obj instanceof BaseDO)){
+			//TODO 暂时先不管这些错误了，之后修正
+			logger.info("返回的参数类型不正确");
+			return null;
+		}
+		BaseDO nextDO = (BaseDO) obj; 
+		Transition transition = process.getNextState(stateId,nextDO);
+		if(transition==null){
+			//说明没有配置之后的transition，正常逻辑下，这个流程应该是结束了
+			//TODO 依然没有处理返回结果
+			logger.info("本次流程处理结束了");
+			return null;
+		}
+		baseDO.setNext(transition.getTo());
+		this.schedule(baseDO);
+		return null;
 	}
 	
 	public String[] getProcessXmlFiles() {

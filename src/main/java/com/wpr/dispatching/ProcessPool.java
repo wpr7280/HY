@@ -22,11 +22,14 @@ public class ProcessPool {
 	private String type; 
 	/*具体的线程池*/
 	private ThreadPoolExecutor threadPoolExecutor;
+	
+//	private WorkFlowEngine workFlowEngine;
 	//感觉任务队列并不是很必要，暂时就先不弄了
 //	private BlockingQueue<Task> taskQueue;
 	/*保证一段时间内对某个任务的调度不会超过某个阈值*/
 	private Semaphore semaphore;
 	public ProcessPool(String type,int capacity) {
+		this.type =type;
 		semaphore = new Semaphore(capacity,true);
 	}
 	/**
@@ -37,11 +40,11 @@ public class ProcessPool {
 	 * @return
 	 * @throws PoolBusyException 
 	 */
-	public Result<Void> schdule(BaseDO baseDO, String stateId, Process process) throws PoolBusyException {
+	public Object schdule(BaseDO baseDO, String stateId, Process process) throws PoolBusyException {
+		Object obj = null;
 		try {
 			semaphore.acquire();
-			System.out.println("执行到这里了");
-			Object obj =process.invoke(baseDO,stateId);
+			obj =process.invoke(baseDO,stateId);
 			semaphore.release();
 		} catch (InterruptedException e) {
 			logger.info("当前"+type+"ProcessPool出了问题");
@@ -50,7 +53,7 @@ public class ProcessPool {
 			logger.error("调用方法失败");
 			e.printStackTrace();
 		}
-		return null;
+		return obj;
 	}
 
 }

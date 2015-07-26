@@ -6,7 +6,8 @@
 		<transition result="FAIL" to="first"/>
 	</state>
 	<state target="transation" method="second" id="second">
-		<transition result="SUCCESS" to="second"/>
+		<transition result="SUCCESS" to="third"/>
 		<transition result="FAIL" to="first"/>
 	</state>
+	<state target="transation" method="third" id="third"></state>
 </processor>
