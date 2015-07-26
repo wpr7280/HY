@@ -1,13 +1,17 @@
 package com.wpr.domain;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.dom4j.DocumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+
+import com.wpr.exception.MethodInvokeException;
 
 
 /**
@@ -16,6 +20,7 @@ import org.springframework.context.ApplicationContext;
  *
  */
 public class Process {
+	Logger logger = LoggerFactory.getLogger(Process.class);
 	/*表征线程池的类型*/
 	private String type;
 	/*处理流程的简单描述*/
@@ -24,8 +29,10 @@ public class Process {
 	private String defaultState;
 	/*一个流程中所有的状态类，key是State的id，value是State对象*/
 	private Map<String,State> states;
-	/*注册的方法*/
+	/*注册的方法，key是state的id，value是state定义的方法*/
 	private Map<String,Method> stateProxy;
+	/*上下文*/
+	private ApplicationContext applicationContext;
 	public String getType() {
 		return type;
 	}
@@ -85,8 +92,36 @@ public class Process {
 		for(String key:states.keySet()){
 			State state = states.get(key);
 			Object bean = applicationContext.getBean(state.getTarget());
-			Method method = bean.getClass().getMethod(state.getMethod(), Task.class);
+			Method method = bean.getClass().getMethod(state.getMethod(), BaseDO.class);
 			stateProxy.put(state.getId(),method);
+		}
+		this.applicationContext= applicationContext;
+	}
+	/**
+	 * 调用方法的过程
+	 * @param baseDO     传入的参数
+	 * @param stateId    要调用状态的标志
+	 * @throws MethodInvokeException 
+	 */
+	public Object invoke(BaseDO baseDO, String stateId) throws MethodInvokeException {
+		logger.info("开始调用具体的方法"+states.get(stateId).toString());
+		try {
+			//根据定义的状态，得到需要调用的方法
+			Method method = stateProxy.get(stateId);
+			//得到需要调用的类对象
+			Object object = applicationContext.getBean(states.get(stateId).getTarget());
+			Object invokeResult = method.invoke(object, baseDO);
+			logger.info("调用方法结束");
+			return invokeResult;
+		} catch (IllegalAccessException e) {
+			logger.error("参数不正确");
+			throw new MethodInvokeException(e);
+		} catch (IllegalArgumentException e) {
+			logger.error("参数不正确");
+			throw new MethodInvokeException(e);
+		} catch (InvocationTargetException e) {
+			logger.error("调用方法失败");
+			throw new MethodInvokeException(e);
 		}
 	}
 }

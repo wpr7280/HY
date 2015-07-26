@@ -10,4 +10,8 @@
 		</property>
 	</bean>
 	<bean id="transation" class="com.wpr.test.Transation"></bean>
+	
+	<bean id="dispatchingService" class="com.wpr.service.DispatchingServiceImpl">
+		<property name="workFlowEngine" ref="workFlowEngine"></property>
+	</bean>
 </beans>

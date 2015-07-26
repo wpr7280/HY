@@ -74,13 +74,19 @@
 			<artifactId>dom4j</artifactId>
 			<version>1.4</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-jcl</artifactId>
 			<version>1.7.12</version>
 		</dependency>
-
-
+		
+		<!-- 暂时性的先依赖淘宝的TBSchedule来完成并发，之后最好自己动手写一份 -->
+		<dependency>
+			<groupId>com.taobao.pamirs.schedule</groupId>
+			<artifactId>tbschedule</artifactId>
+			<version>3.2.18</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>HY</finalName>
